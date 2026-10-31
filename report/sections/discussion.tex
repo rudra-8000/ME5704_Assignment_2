@@ -1,0 +1,14 @@
+\section{Findings and discussion}
+
+\textbf{Part (a), summary of Section~\ref{sec:a}.} How the source line enters the equations changes the nodal temperatures by
+tens of kelvin. The cubic ghost node is closest to the converged reference ($1.1\%$), Shortley-Weller is off by $6.3\%$ and node
+snapping by up to $31\%$. The observed grid order is about $1$ because of the segment ends. The solvers differ in cost, not in
+answer: Gauss-Seidel converges at the square of Jacobi's rate, SOR cost grows as $N$, and the explicit Euler stability limit is exact.
+
+\todo{\textbf{All members.} Complete this section after (b) and (c) are done:
+\begin{itemize}
+  \item How the uncertainty in $T$ from part (a) propagates to $\vec q$ (part b) and to $h$ (part c); quote the spread between
+        the $h=1$ answer and the refined $T^*$.
+  \item Which numerical method is most appropriate in each part and why (accuracy, cost, robustness), based on the results.
+  \item Limitations and assumptions (closed line segment, constant $k$ in space, steady state).
+\end{itemize}}

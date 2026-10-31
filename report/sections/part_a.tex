@@ -1,0 +1,294 @@
+\section{Part (a): Steady-state temperature field}\label{sec:a}
+
+The source line lies between grid nodes, so the main question is how it enters the discrete equations.
+Section~\ref{sec:lines} compares six treatments on the given data ($h=1$). A refined-grid reference and a grid-free
+Monte Carlo estimate then show which treatment is most accurate. All numbers come from
+\texttt{code/part\_a/run\_part\_a.m}.
+
+% ======================================================================
+\subsection{Finite-difference equations}
+
+Taylor expansion about a node with neighbours at distance $a$ (left) and $c$ (right) gives
+\begin{gather}
+  T''\approx\frac{2}{a+c}\left[\frac{T_+-T}{c}-\frac{T-T_-}{a}\right]
+  = w_-T_- - (w_-+w_+)\,T + w_+T_+, \label{eq:fd}\\
+  \text{with}\quad w_-=\frac{2}{a(a+c)},\quad w_+=\frac{2}{c(a+c)}. \nonumber
+\end{gather}
+The truncation error is $-\tfrac{c-a}{3}T'''+\dots$ For $a=c=h$ this is the central difference with error $O(h^2)$.
+For any $a,c$ the formula is exact for quadratics.
+
+Applying \eqref{eq:fd} in $x$ and $y$ turns $T_{xx}+T_{yy}=0$ into a linear system $A\mathbf T=\mathbf b$.
+Away from the line the stencil is the usual 5-point one:
+$\T{i-1}{j}+\T{i+1}{j}+\T{i}{j-1}+\T{i}{j+1}-4\T ij=0$.
+
+% ======================================================================
+\subsection{Six ways to use the line}\label{sec:lines}
+
+Nodes $(1,j)$ have the line $0.5$ to their east and nodes $(2,j)$ have it $0.5$ to their west ($j=2,3$).
+
+\textbf{M1, Shortley-Weller stencil.} Use \eqref{eq:fd} with $a=1$, $c=0.5$ and the known line value $\Ts$:
+\begin{equation}
+  T_{xx}\big|_{(1,j)}\approx \tfrac43\,T_{0,j}-4\,\T 1j+\tfrac83\,\Ts ,\qquad
+  T_{xx}\big|_{(2,j)}\approx \tfrac83\,\Ts-4\,\T 2j+\tfrac43\,\T 3j .
+\end{equation}
+M1 is mathematically a quadratic ghost node: the parabola through the node, the line and the opposite neighbour gives
+$T^g_{2,j}=\tfrac13T_{0,j}-2\T 1j+\tfrac83\Ts$, and $T_{0,j}-2\T 1j+T^g_{2,j}$ has the weights above.
+
+\textbf{M2, linear ghost node.} Insert a temporary node where the missing neighbour would be, for example $(2,j)$ seen from
+$(1,j)$, and fill it by Lagrange interpolation through the node and the line, $T^g=\sum_k L_k(x_g)\,T_k$:
+\begin{equation}
+  T^g_{2,j}= L_1(2)\,\T 1j + L_{1.5}(2)\,\Ts = -\T 1j + 2\Ts .
+\end{equation}
+The 5-point stencil is then used with $T^g$ in place of the missing neighbour.
+
+\textbf{M3, cubic ghost node.} Same ghost node, filled by the cubic through $x=0,\,1,\,1.5,\,3$
+(opposite neighbour, node, line, and the node beyond the ghost):
+\begin{equation}
+  T^g_{2,j}=\tfrac19\,T_{0,j}-\T 1j+\tfrac{16}{9}\,\Ts+\tfrac19\,\T 3j .
+\end{equation}
+This gives $T_{xx}|_{(1,j)}\approx\tfrac{10}{9}T_{0,j}-3\,\T 1j+\tfrac19\T 3j+\tfrac{16}{9}\Ts$, with a mirror image for $(2,j)$.
+The linear fit is exact for straight lines, the parabola of M1 for quadratics, and this cubic for cubics.
+
+\textbf{M4 to M6, snapping.} A naive baseline: clamp the nearest nodes to $350$~K. M4 clamps $(1,2),(1,3)$,
+M5 clamps $(2,2),(2,3)$, M6 clamps all four.
+
+\medskip
+\textbf{The nine equations for M3} (the best treatment, Section~\ref{sec:result}), with $T_b=200$ and $\Ts=350$:
+\begin{align}
+\T 21+\T 12-4\T 11 &= -400, &
+\T 11+\T 31+\T 22-4\T 21 &= -200, \nonumber\\
+\T 21+\T 32-4\T 31 &= -400, &
+\T 11+\T 13+\tfrac19\T 32-5\T 12 &= -\tfrac{7600}{9}, \nonumber\\
+\T 21+\T 23+\tfrac{10}{9}\T 32-5\T 22 &= -\tfrac{5800}{9}, &
+\T 31+\T 33+\T 22-4\T 32 &= -200, \label{eq:system}\\
+\T 12+\tfrac19\T 33-5\T 13 &= -\tfrac{9400}{9}, &
+\T 22+\tfrac{10}{9}\T 33-5\T 23 &= -\tfrac{7600}{9}, \nonumber\\
+\T 23+\T 32-4\T 33 &= -400. \nonumber
+\end{align}
+Every row is strictly diagonally dominant with non-negative off-diagonal entries, so Jacobi and Gauss-Seidel converge.
+The solver, time-marching and random-walk sections use this system.
+
+\begin{table}[H]
+\centering\small
+\input{\rp tables/a_treatments}
+\caption{Temperatures [K] at the nine nodes (Gauss elimination). M1 Shortley-Weller, M2 linear ghost, M3 cubic ghost,
+M4 to M6 snapping (left pair, right pair, all four). $T^*$ is the mesh-converged reference of Section~\ref{sec:refine}.
+``max dev.'' is the largest $|T-T^*|$ over the nine nodes, in kelvin and in percent of $T^*$.}
+\label{tab:treatments}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.88\textwidth]{a_treatments.pdf}
+  \caption{Nodal temperature maps for the six treatments (dark red = clamped to $350$~K).}
+  \label{fig:treatments}
+\end{figure}
+
+% ======================================================================
+\subsection{Solving \texorpdfstring{$A\mathbf T=\mathbf b$}{A T = b}}
+
+All solvers are applied to the M3 system \eqref{eq:system}.
+
+\textbf{Direct.} Gauss elimination with partial pivoting, and Crout LU ($A=LU$, then $L\mathbf y=\mathbf b$,
+$U\mathbf x=\mathbf y$). They agree to $10^{-13}$~K.
+
+\textbf{Iterative.} With relaxation factor $\omega$,
+\begin{equation}
+  \text{Jacobi: } x_i^{(k+1)}=\frac{b_i-\sum_{j\ne i}A_{ij}x_j^{(k)}}{A_{ii}},\qquad
+  \text{SOR: } x_i^{\rm new}=(1-\omega)x_i^{\rm old}+\omega\,\frac{b_i-\sum_{j\ne i}A_{ij}x_j}{A_{ii}}.
+\end{equation}
+SOR uses the newest values immediately, and $\omega=1$ is Gauss-Seidel (Liebmann's method).
+
+\begin{table}[H]
+\centering\small
+\input{\rp tables/a_solvers}
+\caption{Solvers on the $9\times9$ system of M3. The residual factor is the mean reduction of $\|\mathbf b-A\mathbf x\|_\infty$ per sweep.}
+\label{tab:solvers}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{a_solvers.pdf}
+  \caption{Left: residual history. Right: sweeps against $\omega$ (minimum near $\omega=1.15$).}
+  \label{fig:solvers}
+\end{figure}
+
+\begin{itemize}
+  \item Gauss-Seidel converges at the square of the Jacobi rate ($0.346\approx0.586^2$), as theory predicts.
+  \item SOR with $\omega=1.15$ needs $15$ sweeps against $25$ for Gauss-Seidel. As $\omega\to2$ the cost rises steeply ($538$ sweeps at $\omega=1.95$).
+  \item The gap grows with grid size. On the grids of Section~\ref{sec:refine} ($N=8,16,32$), Gauss-Seidel needs
+        $103,\,407,\,1562$ sweeps ($\propto N^2$) and optimal SOR needs $38,\,74,\,151$ ($\propto N$).
+\end{itemize}
+
+% ======================================================================
+\subsection{Marching in time to the steady state}
+
+The steady solution is the $t\to\infty$ limit of $\mathrm dT/\mathrm dt=\nabla^2T$ (diffusivity set to $1$). After spatial
+discretisation this is the ODE system
+\begin{equation}
+  \frac{\mathrm d\mathbf T}{\mathrm dt}=A\mathbf T-\mathbf b,\qquad \mathbf T(0)=200\ \mathrm{K}.
+\end{equation}
+Power and inverse iteration give $\lambda_{\max}=-6.98$ and $\lambda_{\min}=-1.73$, so the slowest time constant is
+$\tau=1/|\lambda_{\min}|=0.577$. Explicit Euler is stable only for
+\begin{equation}
+  \Delta t\le\frac{2}{|\lambda_{\max}|}=0.2864,\qquad\text{and RK4 for }\Delta t\le \frac{2.785}{|\lambda_{\max}|}=0.399.
+\end{equation}
+Running explicit Euler at $0.95$ and $1.05$ of its limit confirms this: the error falls to $4\times10^{-7}$~K in the first
+case and grows to $7\times10^{5}$~K in the second (Fig.~\ref{fig:transient}, right).
+
+\begin{table}[H]
+\centering\small
+\input{\rp tables/a_transient}
+\caption{Time-marching schemes to $t=10\tau$ against an RK4 reference with $\Delta t=0.05\,\Delta t_{\max}$. All end at the
+steady state of M3. The last column is the error as a percentage of the steady $T_{2,2}$.}
+\label{tab:transient}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.88\textwidth]{a_transient.pdf}
+  \caption{Left: $T_{2,2}(t)$ for several schemes. Right: explicit Euler just below and just above its stability limit.}
+  \label{fig:transient}
+\end{figure}
+
+At the same step, RK4 is about $170$ times more accurate than explicit Euler ($0.05$ against $8.9$~K). Implicit Euler is
+unconditionally stable but strongly damped. Crank-Nicolson is second order ($0.64$~K at $\Delta t=0.5\,\Delta t_{\max}$) but
+rings at $\Delta t=10\,\Delta t_{\max}$ (error $48$~K): its amplification factor $(1+z/2)/(1-z/2)$ tends to $-1$ for fast modes,
+so stability does not guarantee a smooth transient. Settling to $0.1$~K takes $t=3.61\approx6.3\tau$. For a steady answer alone,
+time marching costs far more than one elimination.
+
+% ======================================================================
+\subsection{Grid refinement and Richardson extrapolation}\label{sec:refine}
+
+On a uniform grid with $N=8,16,\dots,128$ divisions the line falls exactly on nodes, so it is imposed as fixed nodes and no
+special stencil is needed. These $N^2$-unknown systems are solved by matrix-free SOR with $\omega=2/(1+\sin(\pi/N))$.
+The observed order $p$ comes from three grids, and Richardson extrapolation gives the reference $T^*$:
+\begin{equation}
+  p=\log_2\frac{T_h-T_{h/2}}{T_{h/2}-T_{h/4}},\qquad
+  T^*=T_{h/4}+\frac{T_{h/4}-T_{h/2}}{2^{p}-1}.
+\end{equation}
+
+\begin{table}[H]
+\centering\small
+\input{\rp tables/a_refinement}
+\caption{Refinement sequence at three nodes [K], observed order $p$, and the extrapolated reference $T^*$.}
+\label{tab:refine}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.47\textwidth}\centering
+    \includegraphics[width=\textwidth]{a_convergence.pdf}
+    \caption{Error of the nine nodes against $h$.}\label{fig:conv}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.47\textwidth}\centering
+    \includegraphics[width=\textwidth]{a_field.pdf}
+    \caption{Converged field ($N=128$). Dots are the given nodes.}\label{fig:field}
+  \end{subfigure}
+  \caption{Grid convergence and the converged temperature field.}
+\end{figure}
+
+The observed order is $p\approx1.0$ at every node, not the $2$ expected for a smooth problem. At the ends of a
+fixed-temperature segment the solution behaves like $\sqrt r$, so $T_{xx}\propto r^{-3/2}$ is unbounded and the Taylor
+argument behind $O(h^2)$ fails. Assuming $p=2$ would shift $T^*$ by about $0.4$~K, so the measured $p$ is used. $T^*$ is
+trusted to about $\pm0.5$~K, which the grid-free check below supports.
+
+% ======================================================================
+\subsection{Monte Carlo random walks (beyond the syllabus)}
+
+Laplace's equation has the mean-value property, so a temperature equals the expected boundary temperature reached by a
+random walker started there (Kakutani, 1944). This is the one method used that is not in the lecture notes. Two variants:
+
+\textbf{Grid walk.} Row $r$ of $A\mathbf T=\mathbf b$ is rewritten as $T_r=\sum_kp_{rk}T_k+q_r\bar T_r$ with
+$p_{rk}=A_{rk}/(-A_{rr})$ (step probabilities) and $q_r=1-\sum_kp_{rk}$ (probability of hitting the edge or line).
+A walker steps with probabilities $p_{rk}$ and scores $\bar T_r$ when it hits. The mean score reproduces the finite-difference
+answer with $N^{-1/2}$ noise. This needs $p_{rk}\ge0$, which holds for M3.
+
+\textbf{Walk on spheres.} No grid. From the current point, jump to a random point on the largest circle that touches the plate
+edge or the source segment. Repeat until within $\varepsilon=10^{-4}$ of either, then score $350$ or $200$~K. The distance to
+the segment is exact, so the half-cell offset never appears and there is no discretisation error.
+
+\begin{table}[H]
+\centering\small
+\input{\rp tables/a_montecarlo}
+\caption{Monte Carlo estimates [K] with $2\times10^5$ walks per node (fixed seed), with 95\% half-widths.}
+\label{tab:mc}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.46\textwidth]{a_montecarlo.pdf}
+  \caption{Rms error over the nine nodes (5 repeats) against the number of walks $N$. The slope is $-1/2$.}
+  \label{fig:mc}
+\end{figure}
+
+The grid walk matches M3 to within $0.28$~K at every node, inside its 95\% interval at all nine. Walk-on-spheres lands within
+$0.3$~K of $T^*$ at all nine nodes, so it independently confirms the Richardson reference. A tenfold gain in accuracy needs a
+hundredfold more walks, so Monte Carlo is a check rather than a competitive solver.
+
+% ======================================================================
+\subsection{Validation of the scripts}
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{@{}p{3.1cm} p{7.6cm} l@{}}
+\toprule
+Test & What is checked & Result \\
+\midrule
+Lecture exercise & $2\times2$ interior, SOR $\omega=1.1$: $46.9,\ 71.9,\ 40.6,\ 65.6$ & matches to $0.05$~K \\
+Known solution & $u=e^x\sin y$ on the unit square, edges from $u$ (Table~\ref{tab:test}) & order $2.00$ \\
+Patch test & $u=x^2-y^2+xy$ on edges and line: M1 and M3 must be exact & $1.8\times10^{-15}$~K \\
+ & same test for the linear ghost node M2 & $0.15$~K (inexact) \\
+Solver agreement & Gauss, LU, Jacobi, GS, SOR against MATLAB's \texttt{\textbackslash} (used only here as an oracle) & $<10^{-8}$ \\
+Physics & $200\le T\le350$~K for M1 to M3 (maximum principle) & holds \\
+\bottomrule
+\end{tabular}
+\caption{Validation tests (\texttt{tests/test\_part\_a.m}). All pass.}
+\label{tab:validation}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\input{\rp tables/a_test}
+\caption{Convergence on $u=e^x\sin y$. The uniform solver is second order, so the $O(h)$ behaviour in
+Section~\ref{sec:refine} comes from the geometry, not from a bug.}
+\label{tab:test}
+\end{table}
+
+% ======================================================================
+\subsection{Result and conclusion for part (a)}\label{sec:result}
+
+\textbf{Question.} Steady-state temperature at the nine interior nodes of the given grid, from $T_{xx}+T_{yy}=0$.
+
+\textbf{Equation used.} At every node, with the line entering through the ghost value $T^g$ (M3),
+\begin{equation}
+  \T{i-1}{j}+\T{i+1}{j}+\T i{j-1}+\T i{j+1}-4\T ij=0,\qquad
+  T^g_{2,j}=\tfrac19\,T_{0,j}-\T 1j+\tfrac{16}{9}\,\Ts+\tfrac19\,\T 3j ,
+\end{equation}
+with a mirror image for the nodes $(2,j)$. This is assembled as $A\mathbf T=\mathbf b$ and solved by Gauss elimination.
+
+\textbf{Result.}
+\begin{table}[H]
+\centering\small
+\input{\rp tables/a_answer}
+\caption{Steady-state temperatures [K] at the nine interior nodes (M3, $h=1$), with the mesh-converged reference $T^*$ in
+brackets. The largest deviation from $T^*$ is $3.1$~K ($1.1\%$).}
+\label{tab:answer}
+\end{table}
+
+\textbf{Do the results change, and why?} Yes. The line is half a cell from four nodes, so how it enters the equations matters
+more than the solver (all solvers agree to $10^{-8}$~K).
+\begin{itemize}
+  \item Snapping nodes to $350$~K moves the source by half a cell. Errors reach $84$~K ($31\%$).
+  \item Shortley-Weller (M1) has a first-order local error $-\tfrac{c-a}{3}T'''$ at the four nodes next to the line: $17$~K ($6.3\%$).
+  \item The linear ghost node (M2) is closer ($11.6$~K, $4.2\%$), partly by error cancellation, and it fails the patch test.
+  \item The cubic ghost node (M3) removes the first-order term and is closest to $T^*$: $3.1$~K ($1.1\%$).
+\end{itemize}
+Refinement converges at only first order because of the singular segment ends. Walk-on-spheres, which uses no grid, confirms
+$T^*$ to within $0.3$~K.
+
+\textbf{Most appropriate method.} M3 on the given grid, with $T^*$ ($\pm0.5$~K) as the accuracy benchmark.
+
+\textbf{For parts (b) and (c).} Use the nodal values of Table~\ref{tab:answer} (file column \texttt{T\_cubic\_h1}). The edges are
+$200$~K and the line is $350$~K at $x=1.5$, only $0.5$ from nodes $(1,2),(1,3),(2,2),(2,3)$, so gradients there need the
+non-uniform formula \eqref{eq:fd}. The deviation from $T^*$ ($\le3.1$~K) is the temperature uncertainty to carry forward.

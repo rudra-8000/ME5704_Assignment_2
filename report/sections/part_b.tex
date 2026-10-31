@@ -1,0 +1,13 @@
+\section{Part (b): Heat flux density \texorpdfstring{$\vec q=-k\nabla T$}{q = -k grad T}}\label{sec:b}
+
+\todo{\textbf{Owner: Rongjian.} Use the temperature field from part (a) (see the interface note in the problem section).
+Suggested structure (keep it equation- and figure-heavy, short paragraphs):
+\begin{itemize}
+  \item Fourier's law in components: $q_x=-k\,\partial T/\partial x$, $q_y=-k\,\partial T/\partial y$; final answer \emph{in terms of $k$}.
+  \item Finite-difference formulas for $\partial T/\partial x,\ \partial T/\partial y$ at the nodes (forward/backward at the edges,
+        central inside; Richardson extrapolation or the higher-accuracy formulas from the lecture notes), with the Taylor-series
+        truncation error of each. Mind the non-uniform spacing next to the source line.
+  \item Table of $(q_x,q_y)/k$ at the nine nodes, a quiver/contour figure, and $|\vec q|/k$.
+  \item Compare at least two schemes (e.g.\ different orders, or $h=1$ data vs.\ the refined field) and explain why they differ.
+  \item A simple test case with a known gradient (e.g.\ $T=x^2-y^2$) showing your script is correct.
+\end{itemize}}

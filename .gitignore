@@ -1,0 +1,18 @@
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+# editor / OS
+.DS_Store
+Thumbs.db
+*.asv
+*~
+# private working notes
+CLAUDE.md
+.claude/

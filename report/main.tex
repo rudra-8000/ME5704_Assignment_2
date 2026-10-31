@@ -1,0 +1,72 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------------------------------------------------------------
+% Packages (all standard on Overleaf, pdfLaTeX)
+% ---------------------------------------------------------------
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage[colorlinks=true,linkcolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+\usepackage{fancyhdr}
+
+% Paths: work when compiled from report/ and when the repo root is the project root (Overleaf).
+\graphicspath{{figures/}{report/figures/}}
+\IfFileExists{sections/titlepage.tex}{\newcommand{\rp}{}}{\newcommand{\rp}{report/}}
+\IfFileExists{../code/shared/plateProblem.m}{\newcommand{\cp}{../code/}}{\newcommand{\cp}{code/}}
+\setlength{\parindent}{0pt}
+\setlength{\headheight}{14pt}
+\setlength{\parskip}{4pt}
+\captionsetup{font=small,labelfont=bf}
+\setlist{itemsep=1pt,topsep=2pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{ME5704 Group Project 2}
+\rhead{Plate heat conduction}
+\cfoot{\thepage}
+
+% ---------------------------------------------------------------
+% Macros
+% ---------------------------------------------------------------
+% Red box marking text that a teammate still has to write.
+\newcommand{\todo}[1]{\begin{tcolorbox}[colback=red!4,colframe=red!60!black,
+  title={TODO},fonttitle=\bfseries\small,boxrule=0.6pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+  \small #1\end{tcolorbox}}
+\newcommand{\T}[2]{T_{#1,#2}}   % node temperature T_{i,j}
+\newcommand{\Ts}{T_{\mathrm{s}}}
+
+\lstdefinestyle{matlabstyle}{
+  language=Matlab, basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{blue!70!black}\bfseries, commentstyle=\color{green!40!black},
+  stringstyle=\color{orange!70!black}, numbers=left, numberstyle=\tiny\color{gray},
+  numbersep=5pt, breaklines=true, showstringspaces=false, frame=single, tabsize=4}
+\lstset{style=matlabstyle}
+
+\begin{document}
+
+\input{\rp sections/titlepage}
+\input{\rp sections/contributions}
+\input{\rp sections/setup}
+\clearpage
+\input{\rp sections/part_a}
+\clearpage
+\input{\rp sections/part_b}
+\clearpage
+\input{\rp sections/part_c}
+\clearpage
+\input{\rp sections/discussion}
+\input{\rp sections/conclusion}
+\input{\rp sections/declaration}
+
+\appendix
+\input{\rp sections/appendix}
+
+\end{document}

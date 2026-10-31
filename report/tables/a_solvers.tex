@@ -1,0 +1,11 @@
+\begin{tabular}{@{}l l r r@{}}
+\toprule
+Method & Type & Sweeps to $10^{-8}$ & Residual factor per sweep \\
+\midrule
+Gauss elimination (pivoting) & direct & n/a & n/a \\
+Crout LU & direct & n/a & n/a \\
+Jacobi & iterative & 47 & 0.586 \\
+Gauss--Seidel & iterative & 25 & 0.346 \\
+SOR, $\omega=1.15$ & iterative & 15 & 0.154 \\
+\bottomrule
+\end{tabular}

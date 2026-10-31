@@ -1,0 +1,122 @@
+
+Shortley-Weller (rows y=3..1, cols x=1..3)
+  280.8658  289.6073  231.4787
+  285.1946  295.6719  236.3077
+  230.3020  236.0136  218.0803
+
+
+Ghost, linear (rows y=3..1, cols x=1..3)
+  276.1987  284.0100  229.5739
+  280.9937  290.4760  234.2856
+  228.7695  234.0845  217.0925
+
+
+Ghost, cubic (rows y=3..1, cols x=1..3)
+  268.5040  275.5295  226.5954
+  272.8985  281.4306  230.8520
+  225.8938  230.6766  215.3822
+
+
+Snap left pair (rows y=3..1, cols x=1..3)
+  350.0000  259.4770  221.2561
+  350.0000  266.6518  225.5476
+  245.3956  231.5825  214.2825
+
+
+Snap right pair (rows y=3..1, cols x=1..3)
+  251.8041  350.0000  251.8041
+  257.2165  350.0000  257.2165
+  227.0619  251.0309  227.0619
+
+
+Snap all four (rows y=3..1, cols x=1..3)
+  350.0000  350.0000  251.9231
+  350.0000  350.0000  257.6923
+  251.9231  257.6923  228.8462
+
+observed order p (rows x=1..3, cols y=1..3):
+    0.9952    1.0383    1.0542
+    0.9930    1.0365    1.0533
+    0.9653    1.0133    1.0318
+
+Richardson reference (p observed), rows y=3..1:
+  266.2145  272.4321  224.1376
+  271.5233  279.4145  229.0131
+  226.4816  231.3434  215.9843
+
+Richardson with p=2 assumed, rows y=3..1:
+  266.5897  272.8406  224.2675
+  271.9146  279.8509  229.1776
+  226.7040  231.5978  216.0991
+
+SOR sweeps per grid: 38 74 151 296 586 
+sw        max|T - Tref| =  17.18 K
+ghost1    max|T - Tref| =  11.58 K
+ghost3    max|T - Tref| =   3.10 K
+snapL     max|T - Tref| =  83.79 K
+snapR     max|T - Tref| =  77.57 K
+snapAll   max|T - Tref| =  83.79 K
+diagonally dominant: 1 (strict rows: 9 of 9)
+max |Gauss - LU| = 5.68e-14
+sweeps to residual < 1e-08:  Jacobi 47, Gauss-Seidel 25, SOR(omega=1.15) 15
+mean residual factor per sweep: Jacobi 0.586, GS 0.346, SOR 0.154  (Jacobi^2 = 0.344)
+max |iterative - Gauss|: Jacobi 5.2e-09, GS 2.5e-09, SOR 1.2e-09
+fine-grid sweeps  N = [8 16 32]:  GS [103 407 1562] | SOR(opt) [38 74 151]
+lambda_max = -6.984, lambda_min = -1.734
+explicit Euler limit dt <= 0.2864; RK4 limit dt <= 0.3987; slowest time constant tau = 0.577
+scheme        dt   steps   T22(end)  max err T22
+euler     0.1432      40   281.4301       8.9289
+rk4       0.1432      40   281.4287       0.0536
+ieuler    0.1432      40   281.4250       5.3633
+cn        0.1432      40   281.4288       0.6430
+ieuler    2.8635       2   280.1222       9.2419
+cn        2.8635       2   251.2216      48.1869
+explicit Euler dt = 0.95*dtMax: final max error 4.22e-07
+explicit Euler dt = 1.05*dtMax: final max error 7.19e+05
+settling time (|T - Tss| < 0.1 K): t = 3.61 = 6.3 tau
+N =    100   rms error  grid walk 5.009 K   walk-on-spheres 5.299 K
+N =    316   rms error  grid walk 2.317 K   walk-on-spheres 3.585 K
+N =   1000   rms error  grid walk 1.349 K   walk-on-spheres 2.365 K
+N =   3162   rms error  grid walk 0.877 K   walk-on-spheres 1.306 K
+N =  10000   rms error  grid walk 0.477 K   walk-on-spheres 0.634 K
+N =  31623   rms error  grid walk 0.263 K   walk-on-spheres 0.320 K
+N = 100000   rms error  grid walk 0.124 K   walk-on-spheres 0.192 K
+
+ N = 200000 walks per node
+ node   M3      gridWalk  +-95%   Tref    WoS    +-95%
+(1,1)  225.89   225.90   0.19   226.48  226.38   0.25
+(2,1)  230.68   230.78   0.23   231.34  231.51   0.27
+(3,1)  215.38   215.40   0.18   215.98  216.12   0.20
+(1,2)  272.90   272.84   0.15   271.52  271.40   0.33
+(2,2)  281.43   281.71   0.28   279.41  279.49   0.33
+(3,2)  230.85   230.85   0.24   229.01  229.23   0.26
+(1,3)  268.50   268.54   0.08   266.21  265.92   0.33
+(2,3)  275.53   275.59   0.20   272.43  272.48   0.33
+(3,3)  226.60   226.61   0.21   224.14  223.93   0.24
+WoS reference inside the 95% CI at 9 of 9 nodes; max |WoS - Tref| = 0.30 K
+Test 1: lecture exercise
+  T11 46.87  T12 71.87  T21 40.62  T22 65.62   (notes: 46.9, 71.9, 40.6, 65.6)
+  [PASS] matches the notes to 0.05 K
+Test 2: grid convergence (exact harmonic solution)
+  h = 1/[4 8 16 32]  max error = [0.000579 0.00016 4.07e-05 1.02e-05]
+  observed order = [1.86 1.98 2]
+  [PASS] observed order is 2 (+-0.1)
+Test 3: patch test, exact quadratic harmonic data on edges and line
+  sw      max error 1.78e-15
+  [PASS] sw reproduces the quadratic (error < 1e-9)
+  ghost3  max error 1.78e-15
+  [PASS] ghost3 reproduces the quadratic (error < 1e-9)
+  ghost1  max error 1.51e-01
+Test 4: solvers vs backslash oracle
+  [PASS] Gauss elimination
+  [PASS] Crout LU
+  [PASS] Jacobi
+  [PASS] Gauss-Seidel
+  [PASS] SOR 1.3
+Test 5: maximum principle and Lagrange weights
+  [PASS] 200 K <= T <= 350 K for SW and ghost treatments
+  [PASS] Lagrange weights reproduce f = x^2 and f = 1
+
+0 test group(s) failed
+
+Total run time 41.5 s

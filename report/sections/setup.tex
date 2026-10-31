@@ -1,0 +1,35 @@
+\section{Problem and assumptions}
+
+A square plate of unit thickness, $0\le x,y\le 4$, has all four edges at $T_b=200$~K. A heat source holds the
+segment $x=1.5,\ 2\le y\le 3$ at $\Ts=350$~K (Fig.~\ref{fig:schematic}). The data are given on a grid with spacing $h=1$
+and nine interior nodes $(i,j)$, $i,j=1,2,3$. The tasks are:
+
+\begin{enumerate}[label=(\alph*)]
+  \item the steady-state temperatures at the nine nodes from Laplace's equation, $T_{xx}+T_{yy}=0$;
+  \item the heat flux density $\vec q=-k\nabla T$ in terms of the conductivity $k$;
+  \item the heat absorbed, $h=\int \vec q\,A\,\mathrm dt$, for the tabulated $k(t)$, $0\le t\le 4$.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.40\textwidth]{a_schematic.pdf}
+  \caption{Plate, interior grid ($h=1$) and source line (red). The line is $0.5$ from nodes $(1,2),(1,3)$ on its left
+  and from $(2,2),(2,3)$ on its right.}
+  \label{fig:schematic}
+\end{figure}
+
+\textbf{Assumptions.}
+\begin{itemize}
+  \item The source line is the closed segment, end points included. The horizontal neighbour of $(1,2)$, $(1,3)$,
+        $(2,2)$ and $(2,3)$ is therefore a $350$~K point at distance $0.5$.
+  \item The line is a fixed-temperature (Dirichlet) condition. Heat flows around its ends.
+  \item Steady state, no internal generation and constant $k$ in space, so Laplace's equation holds.
+  \item $\T ij$ is the temperature at $x=ih$, $y=jh$.
+\end{itemize}
+
+\textbf{Interface between the parts.} Part (a) writes the nodal temperatures to
+\path{code/part_a/results/part_a_temperature.csv}. Column \texttt{T\_cubic\_h1} is the answer on the given $h=1$ data
+(Section~\ref{sec:result}), \texttt{T\_sw\_h1} the Shortley-Weller values, and \texttt{T\_reference} the mesh-converged
+estimate $T^*$.
+
+\todo{\textbf{Rongjian and Jing Yi:} state in one sentence which column of this file you used for $\nabla T$, and why.}
