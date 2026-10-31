@@ -11,7 +11,8 @@ a2_refinement;
 a3_solvers;
 a4_transient;
 a5_montecarlo;
-a6_tables;
-test_part_a;
+a6_robustness;
+test_part_a;                              % writes the validation CSVs used by the tables
+a7_tables;
 fprintf('\nTotal run time %.1f s\n', toc);
 diary off;

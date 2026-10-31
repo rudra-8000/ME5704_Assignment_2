@@ -1,12 +1,13 @@
 \begin{tabular}{@{}l r r r r@{}}
 \toprule
-Scheme & $\Delta t/\Delta t_{\max}$ & Steps & $\max|\Delta T_{2,2}|$ [K] & [\%] \\
+Scheme & $\Delta s/\Delta s_{\max}$ & Steps & $\max|\Delta T_{2,2}|$ [K] & [\% of rise] \\
 \midrule
-Explicit Euler & 0.5 & 40 & 8.93 & 3.17 \\
-RK4 & 0.5 & 40 & 0.05 & 0.02 \\
-Implicit Euler & 0.5 & 40 & 5.36 & 1.91 \\
-Crank--Nicolson & 0.5 & 40 & 0.64 & 0.23 \\
-Implicit Euler & 10.0 & 2 & 9.24 & 3.28 \\
-Crank--Nicolson & 10.0 & 2 & 48.19 & 17.12 \\
+Explicit Euler & 0.5 & 40 & 8.93 & 10.96 \\
+RK4 & 0.5 & 40 & 0.05 & 0.07 \\
+Implicit Euler & 0.5 & 40 & 5.36 & 6.59 \\
+Crank--Nicolson & 0.5 & 40 & 0.64 & 0.79 \\
+Implicit Euler & 10 & 2 & 9.24 & 11.35 \\
+Crank--Nicolson & 10 & 2 & 48.19 & 59.18 \\
+Explicit Euler & 0.125 & 161 & 1.72 & 2.11 \\
 \bottomrule
 \end{tabular}

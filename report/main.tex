@@ -7,6 +7,8 @@
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{array}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{float}
@@ -42,6 +44,7 @@
   \small #1\end{tcolorbox}}
 \newcommand{\T}[2]{T_{#1,#2}}   % node temperature T_{i,j}
 \newcommand{\Ts}{T_{\mathrm{s}}}
+\newcommand{\Tb}{T_{\mathrm{b}}}
 
 \lstdefinestyle{matlabstyle}{
   language=Matlab, basicstyle=\ttfamily\scriptsize,

@@ -23,6 +23,14 @@ fprintf('Richardson reference (p observed), rows y=3..1:\n'); disp(flipud(Tref')
 fprintf('Richardson with p=2 assumed, rows y=3..1:\n');       disp(flipud(Tref2'));
 fprintf('SOR sweeps per grid: '); fprintf('%d ', iters); fprintf('\n');
 
+% ---- check of the reference: repeat the extrapolation one level finer (N = 64, 128, 256)
+T256 = solveFine(256);  idx = (1:3) * 64 + 1;  S256 = T256(idx, idx);
+S64 = squeeze(S(end-1,:,:));  S128 = squeeze(S(end,:,:));
+pFine = log2((S64 - S128) ./ (S128 - S256));
+TrefFine = S256 + (S256 - S128) ./ (2.^pFine - 1);
+dev256 = max(max(abs(TrefFine - Tref)));
+fprintf('reference from N = 64,128,256 differs from the one from N = 32,64,128 by at most %.3f K (N = 256 itself: %.3f K)\n', dev256, max(max(abs(S256 - Tref))));
+
 % ---- errors of the h=1 treatments against the reference
 R = load(fullfile(resDir, 'a1_treatments.mat'));
 fn = fieldnames(R);  errMax = zeros(numel(fn), 1);
@@ -30,7 +38,7 @@ for m = 1:numel(fn)
     errMax(m) = max(max(abs(R.(fn{m}) - Tref)));
     fprintf('%-8s  max|T - Tref| = %6.2f K\n', fn{m}, errMax(m));
 end
-save(fullfile(resDir, 'a2_refinement.mat'), 'Ns', 'S', 'pObs', 'Tref', 'Tref2', 'Tfine', 'iters', 'fn', 'errMax');
+save(fullfile(resDir, 'a2_refinement.mat'), 'Ns', 'S', 'pObs', 'Tref', 'Tref2', 'Tfine', 'iters', 'fn', 'errMax', 'dev256');
 fid = fopen(fullfile(resDir, 'part_a_temperature.csv'), 'w');
 fprintf(fid, 'i,j,x,y,T_cubic_h1,T_sw_h1,T_reference\n');   % interface for parts (b), (c)
 for j = 1:3, for i = 1:3
@@ -38,15 +46,15 @@ for j = 1:3, for i = 1:3
 end, end
 fclose(fid);
 
-% ---- Figure: grid convergence of the 9 nodes (error to reference, log-log)
-f = figure('Visible','off');  hold on;  h = P.L ./ Ns;  cm = lines(9);  c = 0;
-for j = 1:3, for i = 1:3
-    c = c + 1;  e = abs(S(:,i,j) - Tref(i,j));
-    plot(h(1:end-1), e(1:end-1), 'o-', 'Color', cm(c,:), 'MarkerSize', 3);
-end, end
-plot(h, 3*h, 'k--');  plot(h, 3*h.^2, 'k:');  set(gca, 'XScale', 'log', 'YScale', 'log', 'FontSize', 9);
-text(h(end)*1.2, 3.5*h(end), '$O(h)$', 'Interpreter', 'latex');  text(h(end)*1.2, 3.5*h(end)^2, '$O(h^2)$', 'Interpreter', 'latex');
-xlabel('grid spacing $h$', 'Interpreter', 'latex');  ylabel('$|T_h - T^*|$ [K]', 'Interpreter', 'latex');  grid on;  box on;
+% ---- Figure: grid convergence from successive differences |T_h - T_h/2| (no reference needed)
+f = figure('Visible','off');  hold on;  h = P.L ./ Ns;
+D = abs(S(1:end-1,:,:) - S(2:end,:,:));  D = reshape(D, numel(Ns)-1, 9);
+loglog(h(1:end-1), D(:,1:9), '-o', 'Color', [0.55 0.55 0.55], 'MarkerSize', 3, 'HandleVisibility', 'off');
+hn = loglog(h(1:end-1), D(:,5), 'o-', 'Color', [0 0.45 0.74], 'LineWidth', 1.4, 'MarkerSize', 4);   % node (2,2)
+h1 = loglog(h(1:end-1), D(1,5)*h(1:end-1)/h(1), 'k--');  h2 = loglog(h(1:end-1), D(1,5)*(h(1:end-1)/h(1)).^2, 'k:');
+set(gca, 'XScale', 'log', 'YScale', 'log', 'FontSize', 9);
+xlabel('grid spacing $h$', 'Interpreter', 'latex');  ylabel('$|T_h - T_{h/2}|$ [K]', 'Interpreter', 'latex');  grid on;  box on;
+legend([hn h1 h2], {'node (2,2); grey: other eight', '$O(h)$', '$O(h^2)$'}, 'Interpreter', 'latex', 'Location', 'southeast', 'FontSize', 7);
 saveFig(f, 'a_convergence', 8, 6.5);
 
 % ---- Figure: converged temperature field (N = 128)

@@ -1,9 +1,11 @@
 \section{Findings and discussion}
 
 \textbf{Part (a), summary of Section~\ref{sec:a}.} How the source line enters the equations changes the nodal temperatures by
-tens of kelvin. The cubic ghost node is closest to the converged reference ($1.1\%$), Shortley-Weller is off by $6.3\%$ and node
-snapping by up to $31\%$. The observed grid order is about $1$ because of the segment ends. The solvers differ in cost, not in
-answer: Gauss-Seidel converges at the square of Jacobi's rate, SOR cost grows as $N$, and the explicit Euler stability limit is exact.
+tens of kelvin. On the given line the cubic ghost node (M3) is closest to the converged reference, $3.1$~K or $10.2\%$ of the local
+temperature rise, Shortley-Weller is off by $30.4\%$ and node snapping by more than $100\%$. The ranking does not hold for other
+line lengths, so the $h=1$ error is dominated by the unresolved line ends. The observed grid order is about $1$ for the same
+reason, confirmed on an exact slit-tip solution. The solvers differ in cost, not in answer: Gauss-Seidel converges at about the
+square of Jacobi's rate, SOR cost grows as $N$, and the explicit Euler stability limit is confirmed numerically.
 
 \todo{\textbf{All members.} Complete this section after (b) and (c) are done:
 \begin{itemize}

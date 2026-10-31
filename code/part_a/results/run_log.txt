@@ -50,6 +50,7 @@ Richardson with p=2 assumed, rows y=3..1:
   226.7040  231.5978  216.0991
 
 SOR sweeps per grid: 38 74 151 296 586 
+reference from N = 64,128,256 differs from the one from N = 32,64,128 by at most 0.031 K (N = 256 itself: 0.321 K)
 sw        max|T - Tref| =  17.18 K
 ghost1    max|T - Tref| =  11.58 K
 ghost3    max|T - Tref| =   3.10 K
@@ -63,17 +64,18 @@ mean residual factor per sweep: Jacobi 0.586, GS 0.346, SOR 0.154  (Jacobi^2 = 0
 max |iterative - Gauss|: Jacobi 5.2e-09, GS 2.5e-09, SOR 1.2e-09
 fine-grid sweeps  N = [8 16 32]:  GS [103 407 1562] | SOR(opt) [38 74 151]
 lambda_max = -6.984, lambda_min = -1.734
-explicit Euler limit dt <= 0.2864; RK4 limit dt <= 0.3987; slowest time constant tau = 0.577
-scheme        dt   steps   T22(end)  max err T22
-euler     0.1432      40   281.4301       8.9289
+explicit Euler limit ds <= 0.2864; RK4 limit ds <= 0.3987; slowest time constant tau = 0.577
+scheme        ds   steps   T22(end)  max err T22
+euler     0.1432      40   281.4301       8.9288
 rk4       0.1432      40   281.4287       0.0536
 ieuler    0.1432      40   281.4250       5.3633
 cn        0.1432      40   281.4288       0.6430
 ieuler    2.8635       2   280.1222       9.2419
 cn        2.8635       2   251.2216      48.1869
-explicit Euler dt = 0.95*dtMax: final max error 4.22e-07
-explicit Euler dt = 1.05*dtMax: final max error 7.19e+05
-settling time (|T - Tss| < 0.1 K): t = 3.61 = 6.3 tau
+euler     0.0358     161   281.4293       1.7190
+explicit Euler ds = 0.95*dsMax: final max error 4.22e-07
+explicit Euler ds = 1.05*dsMax: final max error 7.19e+05
+settling time (|T - Tss| < 0.1 K): s = 3.61 = 6.3 tau
 N =    100   rms error  grid walk 5.009 K   walk-on-spheres 5.299 K
 N =    316   rms error  grid walk 2.317 K   walk-on-spheres 3.585 K
 N =   1000   rms error  grid walk 1.349 K   walk-on-spheres 2.365 K
@@ -94,6 +96,10 @@ N = 100000   rms error  grid walk 0.124 K   walk-on-spheres 0.192 K
 (2,3)  275.53   275.59   0.20   272.43  272.48   0.33
 (3,3)  226.60   226.61   0.21   224.14  223.93   0.24
 WoS reference inside the 95% CI at 9 of 9 nodes; max |WoS - Tref| = 0.30 K
+line y in [2, 3]: mean observed p 1.02;  max dev. M1 17.2, M2 11.6, M3 3.1 K
+line y in [1.5, 3.5]: mean observed p 0.98;  max dev. M1 15.2, M2 17.1, M3 20.5 K
+line y in [1.5, 3]: mean observed p 1.00;  max dev. M1 14.5, M2 16.4, M3 19.8 K
+line y in [2, 3.5]: mean observed p 1.01;  max dev. M1 13.5, M2 8.3, M3 14.3 K
 Test 1: lecture exercise
   T11 46.87  T12 71.87  T21 40.62  T22 65.62   (notes: 46.9, 71.9, 40.6, 65.6)
   [PASS] matches the notes to 0.05 K
@@ -101,22 +107,47 @@ Test 2: grid convergence (exact harmonic solution)
   h = 1/[4 8 16 32]  max error = [0.000579 0.00016 4.07e-05 1.02e-05]
   observed order = [1.86 1.98 2]
   [PASS] observed order is 2 (+-0.1)
-Test 3: patch test, exact quadratic harmonic data on edges and line
-  sw      max error 1.78e-15
-  [PASS] sw reproduces the quadratic (error < 1e-9)
-  ghost3  max error 1.78e-15
-  [PASS] ghost3 reproduces the quadratic (error < 1e-9)
-  ghost1  max error 1.51e-01
-Test 4: solvers vs backslash oracle
+Test 3: patch tests, exact harmonic data on edges and line
+  quadratic x^2-y^2+xy   max error  M1 1.78e-15   M2 1.51e-01   M3 1.78e-15
+  cubic x^3-3xy^2        max error  M1 2.33e-01   M2 6.79e-01   M3 3.55e-15
+  [PASS] quadratic: M1 and M3 exact (< 1e-9)
+  [PASS] cubic: M3 exact (< 1e-9) while M1 and M2 are not
+Test 4: slit-tip solution (sqrt(r) singularity)
+  max error at 5 fixed points = [0.0253 0.0122 0.00598 0.00297]
+  observed order = [1.06 1.02 1.01]
+  [PASS] order is about 1 (0.7 to 1.3), not 2
+Test 5: solvers vs backslash oracle
   [PASS] Gauss elimination
   [PASS] Crout LU
   [PASS] Jacobi
   [PASS] Gauss-Seidel
   [PASS] SOR 1.3
-Test 5: maximum principle and Lagrange weights
+Test 6: time-marching orders vs matrix exponential
+  euler  error 7.24e-01 -> 3.66e-01, ratio 2.0 (expected about 2)
+  [PASS] euler converges with order 1
+  ieuler error 7.52e-01 -> 3.73e-01, ratio 2.0 (expected about 2)
+  [PASS] ieuler converges with order 1
+  cn     error 1.67e-02 -> 4.17e-03, ratio 4.0 (expected about 4)
+  [PASS] cn converges with order 2
+  rk4    error 7.49e-05 -> 4.29e-06, ratio 17.4 (expected about 16)
+  [PASS] rk4 converges with order 4
+Test 7: Monte Carlo vs exact harmonic function
+  grid walk (1,1): 0.998 +- 0.027 (exact 1)
+  [PASS] grid walk (1,1) within 4 standard errors
+  walk-on-spheres (1,1): 1.010 +- 0.039 (exact 1)
+  [PASS] walk-on-spheres (1,1) within 4 standard errors
+  grid walk (2,2): 3.990 +- 0.043 (exact 4)
+  [PASS] grid walk (2,2) within 4 standard errors
+  walk-on-spheres (2,2): 4.040 +- 0.065 (exact 4)
+  [PASS] walk-on-spheres (2,2) within 4 standard errors
+  grid walk (3,3): 9.012 +- 0.044 (exact 9)
+  [PASS] grid walk (3,3) within 4 standard errors
+  walk-on-spheres (3,3): 9.040 +- 0.063 (exact 9)
+  [PASS] walk-on-spheres (3,3) within 4 standard errors
+Test 8: maximum principle and Lagrange weights
   [PASS] 200 K <= T <= 350 K for SW and ghost treatments
   [PASS] Lagrange weights reproduce f = x^2 and f = 1
 
 0 test group(s) failed
 
-Total run time 41.5 s
+Total run time 43.5 s

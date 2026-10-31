@@ -30,8 +30,9 @@ for i = 1:3, for j = 1:3
     text(i-0.15, j+0.22, sprintf('(%d,%d)', i, j), 'FontSize', 8);
 end, end
 plot([P.xLine P.xLine], [P.yLo P.yHi], 'r-', 'LineWidth', 2.5);
-plot([1 2], [2.5 2.5], 'b-');
-text(1.12, 2.38, '0.5', 'Color', 'b', 'FontSize', 8);  text(1.67, 2.38, '0.5', 'Color', 'b', 'FontSize', 8);
+plot([1 1.5 2], [2.5 2.5 2.5], 'b-|');                       % spacing from each node to the line
+text(1.25, 2.62, '0.5', 'Color', 'b', 'FontSize', 8, 'HorizontalAlignment', 'center');
+text(1.75, 2.62, '0.5', 'Color', 'b', 'FontSize', 8, 'HorizontalAlignment', 'center');
 text(1.55, 1.62, '$T_s = 350$ K', 'Color', 'r', 'Interpreter', 'latex', 'FontSize', 9);
 text(0.6, 4.25, '$T = 200$ K on all edges', 'Interpreter', 'latex', 'FontSize', 9);
 xlabel('x'); ylabel('y'); box on;  set(gca, 'FontSize', 9);
