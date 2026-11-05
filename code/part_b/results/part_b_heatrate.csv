@@ -1,0 +1,13 @@
+name,value,unit,description
+Q_over_k_h1,482.7074,K m,given grid h=1 (T_cubic_h1) - O(h) edge formula (closer to the reference) + trapezoid
+Q_over_k_ref,460.7941,K m,refined fields N=64-128-256 + Richardson (best estimate)
+Q_over_k_h1_O1,482.7074,K m,given grid - 2-point O(h) edge formula
+Q_over_k_h1_O2,529.6746,K m,given grid - 3-point O(h^2) edge formula (2-point where it would cross the line)
+Q_over_k_h1_east,72.8296,K m,given grid (chosen formula) - east edge only
+Q_over_k_h1_west,167.2963,K m,given grid (chosen formula) - west edge only
+Q_over_k_h1_north,170.6289,K m,given grid (chosen formula) - north edge only
+Q_over_k_h1_south,71.9526,K m,given grid (chosen formula) - south edge only
+Q_over_k_ref_east,65.9083,K m,refined fields - east edge only
+Q_over_k_ref_west,155.4657,K m,refined fields - west edge only
+Q_over_k_ref_north,169.0127,K m,refined fields - north edge only
+Q_over_k_ref_south,70.4068,K m,refined fields - south edge only

@@ -1,0 +1,157 @@
+
+Gradient from the given grid (T_cubic_h1) [K/m], rows y = 3..1, cols x = 1..3
+C2   dT/dx
+   37.7647  -20.9543  -37.7647
+   40.7153  -21.0233  -40.7153
+   15.3383   -5.2558  -15.3383
+
+C2   dT/dy
+  -36.4493  -40.7153  -15.4260
+   21.3051   22.4264    5.6066
+   36.4493   40.7153   15.4260
+
+C4   dT/dx
+       NaN       NaN       NaN
+       NaN       NaN       NaN
+       NaN   -7.0077       NaN
+
+C4   dT/dy
+       NaN       NaN       NaN
+   28.4068   29.9019    7.4755
+       NaN       NaN       NaN
+
+R    dT/dx
+       NaN       NaN       NaN
+       NaN       NaN       NaN
+       NaN   -7.0077       NaN
+
+R    dT/dy
+       NaN       NaN       NaN
+   28.4068   29.9019    7.4755
+       NaN       NaN       NaN
+
+OS1  dT/dx
+   68.5040  -48.9341       NaN
+   72.8985  -50.5786       NaN
+       NaN       NaN       NaN
+
+OS1  dT/dy
+   NaN   NaN   NaN
+   NaN   NaN   NaN
+   NaN   NaN   NaN
+
+OS2  dT/dx
+       NaN  -60.1034       NaN
+       NaN  -60.4419       NaN
+       NaN       NaN       NaN
+
+OS2  dT/dy
+   NaN   NaN   NaN
+   NaN   NaN   NaN
+   NaN   NaN   NaN
+
+NU   dT/dx
+  131.4960 -115.6054       NaN
+  127.1015 -108.2854       NaN
+       NaN       NaN       NaN
+
+NU   dT/dy
+   NaN   NaN   NaN
+   NaN   NaN   NaN
+   NaN   NaN   NaN
+
+Richardson equals C4: max |R - C4| = 9.77e-15
+N =  32  h = 0.1250  Q/k = 479.186 K m
+N =  64  h = 0.0625  Q/k = 470.519 K m
+N = 128  h = 0.0312  Q/k = 465.834 K m
+N = 256  h = 0.0156  Q/k = 463.406 K m
+N = 256: Richardson in the FD step changes grad T by at most 0.0103 K/m
+observed order p, dT/dx (rows x = 1..3, cols y = 1..3):
+    0.9921    1.1146    1.1243
+    0.9891    1.1278    1.1320
+    0.9728    1.0329    1.0490
+
+observed order p, dT/dy:
+    1.0056    1.0637    1.0689
+    1.0036    1.0632    1.0777
+    0.9709    1.0197    0.9893
+
+reference dT/dx, rows y = 3..1:
+   89.3908  -76.1402  -30.7459
+   90.4708  -73.8642  -35.1207
+   20.2126  -10.2054  -16.7924
+
+reference dT/dy, rows y = 3..1:
+  -57.0102  -61.4442  -16.9954
+   43.0998   44.1826    6.8812
+   33.7358   38.1292   16.0194
+
+reference from N = 32,64,128 differs from N = 64,128,256 by at most 0.23 K/m
+Q/k: observed p = 0.95, Richardson Q*/k = 460.79 K m (from N = 32,64,128: 460.32)
+group 1 (Tx at [1 2;1 3]): C2 51.63 (data 1.55, diff 53.17)  OS1 20.89 (data 2.29, diff 23.18)  NU 42.11 (data 2.29, diff 44.39)  -> OS1
+group 2 (Tx at [2 2;2 3]): C2 55.19 (data 0.23, diff 55.10)  OS1 27.21 (data 0.64, diff 27.85)  OS2 16.04 (data 0.65, diff 15.77)  NU 39.47 (data 3.92, diff 43.38)  -> OS2
+group 3 (Tx at [2 1]): C2 4.95 (data 0.01, diff 4.96)  C4 3.20 (data 0.01, diff 3.21)  -> C4
+group 4 (Tx at [1 1;3 1;3 2;3 3]): C2 7.02 (data 1.55, diff 5.47)  -> C2
+group 5 (Ty at [1 2;2 2;3 2]): C2 21.79 (data 1.88, diff 23.64)  C4 14.69 (data 2.51, diff 16.79)  -> C4
+group 6 (Ty at [1 1;2 1;3 1;1 3;2 3;3 3]): C2 20.73 (data 1.01, diff 21.74)  -> C2
+headline vs reference: max error 20.89 K/m; largest dT/dx error at node (1,3): 20.89 K/m (23.4% of the reference)
+headline |q|/k vs reference: largest relative deviation 26.8%
+largest data error of the headline schemes: 2.51 K/m
+headline q/k = -grad T, rows y = 3..1:
+  q_x/k
+  -68.5040   60.1034   37.7647
+  -72.8985   60.4419   40.7153
+  -15.3383    7.0077   15.3383
+
+  q_y/k
+   36.4493   40.7153   15.4260
+  -28.4068  -29.9019   -7.4755
+  -36.4493  -40.7153  -15.4260
+
+given grid, O(h^2) edge formula: Q/k = 529.67 (T_cubic_h1), 514.94 (T_reference)
+given grid, O(h)   edge formula: Q/k = 482.71 (T_cubic_h1), 469.95 (T_reference)
+per edge [east west north south]: O(h^2) [51.84 177.9 248.7 51.31]   O(h) [72.83 167.3 170.6 71.95]   reference [65.91 155.5 169 70.41]
+refined fields: Q*/k = 460.79 K m;  given grid, chosen O(h^1) edge formula: 482.71 (+4.8%)
+Test 1: lecture example, Richardson on f = 3^x/x at x = 1
+  D(0.2) = 0.3298  D(0.1) = 0.3078  Richardson 0.3005  exact 0.2958
+  [PASS] matches the notes to 4 decimals
+Test 2: exactness on the h = 1 grid
+  quadratic: C2 0.0e+00  OS2 0.0e+00  NU 0.0e+00  C4 4.4e-16  R 0.0e+00  | OS1 1.00 (O(h), not exact)
+  cubic:     C4 0.0e+00  R 0.0e+00  | C2 1.00 (O(h^2), not exact)
+  [PASS] quadratic: C2, OS2, NU, C4, R exact (< 1e-10)
+  [PASS] cubic: C4 and R exact, C2 not
+Test 3: order of accuracy, f = e^x sin y
+  F1  errors [0.525 0.245 0.118 0.0581 0.0288]  observed order 1.01 (expected 1)
+  [PASS] F1 has order 1 (+-0.15)
+  B1  errors [0.402 0.214 0.111 0.0562 0.0284]  observed order 0.99 (expected 1)
+  [PASS] B1 has order 1 (+-0.15)
+  C2  errors [0.0615 0.0153 0.00381 0.000953 0.000238]  observed order 2.00 (expected 2)
+  [PASS] C2 has order 2 (+-0.15)
+  F2  errors [0.167 0.0355 0.00822 0.00198 0.000486]  observed order 2.03 (expected 2)
+  [PASS] F2 has order 2 (+-0.15)
+  B2  errors [0.0914 0.0263 0.00708 0.00184 0.000468]  observed order 1.97 (expected 2)
+  [PASS] B2 has order 2 (+-0.15)
+  NU  errors [0.0291 0.00745 0.00188 0.000474 0.000119]  observed order 2.00 (expected 2)
+  [PASS] NU has order 2 (+-0.15)
+  C4  errors [0.00199 0.000123 7.63e-06 4.77e-07 2.98e-08]  observed order 4.00 (expected 4)
+  [PASS] C4 has order 4 (+-0.15)
+  R   errors [0.00199 0.000123 7.63e-06 4.77e-07 2.98e-08]  observed order 4.00 (expected 4)
+  [PASS] R has order 4 (+-0.15)
+Test 4: FD-step check on the finest field
+  Richardson in the step changes grad T by 0.0103 K/m
+  [PASS] step error on the N = 256 field below 0.05 K/m
+Test 5: edge heat rate on known boundary integrals
+  h = 1.0:  T = x^2 -> -32.000000000000 (exact -32);  T = x^2-y^2+xy -> 0.0e+00 (exact 0)
+  [PASS] edgeFlux exact for quadratics at h = 1.0
+  h = 0.5:  T = x^2 -> -32.000000000000 (exact -32);  T = x^2-y^2+xy -> 0.0e+00 (exact 0)
+  [PASS] edgeFlux exact for quadratics at h = 0.5
+Test 6: convergence of Q/k with the grid
+  Q/k = [479.186 470.519 465.834 463.406], ratio of successive changes [1.85 1.93]
+  [PASS] Q/k decreases monotonically, first order (ratio 1.6 to 2.4)
+Test 7: gradFine vs MATLAB gradient (oracle)
+  max |gradFine - gradient| = 0.0e+00
+  [PASS] agrees to round-off
+
+0 test(s) failed
+
+Total run time 22.9 s
